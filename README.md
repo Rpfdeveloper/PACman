@@ -74,7 +74,36 @@ bash gradlew core:testSanityBasic
 
 También existen las tareas `core:testSanity`, `core:testBasic`, `core:testAdvanced` y `core:testExpert`, que seleccionan las etiquetas definidas en el material del proyecto. Los informes de pruebas se generan dentro de `core/build/reports/tests/`.
 
-**Estado de verificación:** se han revisado las tareas Gradle y las rutas documentadas. En esta revisión no se ha ejecutado la suite ni validado el juego gráficamente; la existencia de los tests no acredita que todos pasen.
+**Estado de verificación (20 de octubre de 2026):** la suite completa ejecuta **304 pruebas** y la selección `sanity`/`basic` ejecuta **266**, sin fallos ni omisiones, en GitHub Actions con Java 17 y Gradle 7.5.1. La selección por etiquetas vuelve a ejecutar parte de la suite completa; no son pruebas adicionales. También se comprueba la compilación del lanzador de escritorio y la generación de Javadoc. El juego no se ha probado gráficamente en esta revisión.
+
+Los escenarios académicos tienen [mapas de prueba propios](core/src/test/README.md), separados de los niveles jugables de `assets/levels`. Las tareas por etiquetas utilizan las mismas clases compiladas y el mismo classpath que la suite completa.
+
+El workflow [PACman verification](https://github.com/Rpfdeveloper/PACman/actions) comprueba que se generan informes JUnit con pruebas ejecutadas y conserva los informes como artefactos.
+
+## Generar documentación
+
+**Windows PowerShell**
+
+```powershell
+.\gradlew.bat core:javadoc
+```
+
+**Linux / macOS**
+
+```bash
+bash gradlew core:javadoc
+```
+
+El índice se genera en `core/build/docs/javadoc/index.html`, dentro del directorio de construcción del proyecto. La documentación genera avisos por comentarios incompletos; no se ocultan.
+
+## Correcciones posteriores a la práctica
+
+- Configuración explícita de las clases y recursos de las tareas de pruebas.
+- Separación de los mapas de prueba y los niveles jugables.
+- Salida de Javadoc dentro del proyecto y corrección de una etiqueta inválida.
+- `Level.isPathable` devuelve `false` para posiciones inexistentes o nulas; antes podía considerar transitable una casilla fuera del mapa. Tres pruebas de regresión cubren límites, coordenadas extremas y casillas existentes.
+
+Estas mejoras se han preparado con asistencia de IA y están identificadas en el historial. Las 301 pruebas académicas originales y sus atribuciones se conservan.
 
 ## Estructura
 
