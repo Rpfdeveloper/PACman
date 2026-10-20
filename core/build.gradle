@@ -3,6 +3,13 @@ sourceCompatibility = 17
 
 sourceSets.main.java.srcDirs = [ "src/main/java" ]
 sourceSets.test.java.srcDirs = [ "src/test/java" ]
+sourceSets.test.resources.srcDirs = [ "../assets" ]
+
+// Custom tagged Test tasks must execute the same compiled tests and resources.
+tasks.withType(Test).configureEach {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+}
 
 eclipse.project.name = appName + "-core"
 
@@ -44,5 +51,5 @@ task testExpert(type: Test) {
 javadoc {
     source = sourceSets.main.allJava
     options.memberLevel = JavadocMemberLevel.PRIVATE
-    destinationDir = file("/docs/")
+    destinationDir = layout.buildDirectory.dir("docs/javadoc").get().asFile
 }

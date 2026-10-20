@@ -1,0 +1,52 @@
+name: PACman verification
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gradle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile, test and generate Javadoc
+        run: bash gradlew --no-daemon --console=plain --continue core:test core:testSanityBasic desktop:classes core:javadoc
+      - name: Verify that both test tasks actually ran tests
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          for task in ("test", "testSanityBasic"):
+              reports = list((Path("core/build/test-results") / task).glob("TEST-*.xml"))
+              if not reports:
+                  raise SystemExit(f"{task}: no JUnit reports were generated")
+              roots = [ET.parse(report).getroot() for report in reports]
+              total = sum(int(root.get("tests", 0)) for root in roots)
+              failed = sum(int(root.get("failures", 0)) + int(root.get("errors", 0)) for root in roots)
+              skipped = sum(int(root.get("skipped", 0)) for root in roots)
+              print(f"{task}: {total} tests, {failed} failures/errors, {skipped} skipped")
+              if total <= skipped or failed:
+                  raise SystemExit(f"{task}: no executed tests or failing tests")
+          PY
+      - name: Save test and documentation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pacman-verification-reports
+          path: |
+            core/build/reports/tests/
+            core/build/test-results/
+            core/build/docs/javadoc/
+          if-no-files-found: warn
