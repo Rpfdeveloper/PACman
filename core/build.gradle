@@ -3,7 +3,7 @@ sourceCompatibility = 17
 
 sourceSets.main.java.srcDirs = [ "src/main/java" ]
 sourceSets.test.java.srcDirs = [ "src/test/java" ]
-sourceSets.test.resources.srcDirs = [ "../assets" ]
+sourceSets.test.resources.srcDirs = [ "src/test/resources" ]
 
 // Custom tagged Test tasks must execute the same compiled tests and resources.
 tasks.withType(Test).configureEach {

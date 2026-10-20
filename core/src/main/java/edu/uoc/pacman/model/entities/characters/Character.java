@@ -28,9 +28,7 @@ public abstract class Character extends Entity implements Movable, Hitable {
      * @param startPosition of the entity
      * @param direction     of the entity
      * @param sprite        of the entity
-     * @param sprite        of the entity
      * @param level         of the entity
-     * @super (startPosition, true, sprite)
      * @see Entity
      * @see Position
      * @see Sprite
