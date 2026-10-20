@@ -390,15 +390,15 @@ public class Level {
     }
 
     /**
-     * Given a position, it indicates if such a position is pathable or not.
+     * Given a position, indicates whether it exists on the map and is not a wall.
      *
      * @param position Position which must be checked.
-     * @return {@code true} if the position is pathable. Otherwise, {@code false}.
+     * @return {@code true} if the position exists and is pathable; {@code false}\n     *         for walls, positions outside the map, or {@code null}.
      */
     public boolean isPathable(Position position) {
         MapItem mapItem = mapItemList.stream().filter(item -> item.getPosition().equals(position)).findFirst().orElse(null);
 
-        return !(mapItem instanceof Wall);
+        return mapItem != null && !(mapItem instanceof Wall);
     }
 
 
