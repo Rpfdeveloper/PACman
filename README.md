@@ -5,6 +5,8 @@
 <h1 align="center">PACman · Java y programación orientada a objetos</h1>
 <p align="center"><strong>Java 17 · libGDX 1.11.0 · Gradle 7.5.1 · JUnit 5 · Mockito</strong></p>
 
+[![PACman verification](https://github.com/Rpfdeveloper/PACman/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/Rpfdeveloper/PACman/actions/workflows/gradle.yml)
+
 Proyecto académico de la asignatura de Diseño y programación orientada a objetos de la **Universitat Oberta de Catalunya (UOC)**. Un juego de escritorio sirve como contexto para trabajar el modelado de entidades, las interfaces, la herencia y los comportamientos de los personajes.
 
 **English:** Academic Java desktop game project built with libGDX. The repository contains the game model, controller and screens, several ghost behaviours, and JUnit tests. It includes UOC-provided code and coursework contributions.
@@ -79,6 +81,32 @@ También existen las tareas `core:testSanity`, `core:testBasic`, `core:testAdvan
 Los escenarios académicos tienen [mapas de prueba propios](core/src/test/README.md), separados de los niveles jugables de `assets/levels`. Las tareas por etiquetas utilizan las mismas clases compiladas y el mismo classpath que la suite completa.
 
 El workflow [PACman verification](https://github.com/Rpfdeveloper/PACman/actions) comprueba que se generan informes JUnit con pruebas ejecutadas y conserva los informes como artefactos.
+
+### Verificación completa sin abrir el juego
+
+Desde la raíz del repositorio, este comando reproduce las tareas del [workflow](.github/workflows/gradle.yml): suite completa, selección por etiquetas, compilación del lanzador y Javadoc.
+
+**Windows PowerShell**
+
+```powershell
+.\gradlew.bat --no-daemon --console=plain --continue core:test core:testSanityBasic desktop:classes core:javadoc
+```
+
+**Linux / macOS**
+
+```bash
+bash gradlew --no-daemon --console=plain --continue core:test core:testSanityBasic desktop:classes core:javadoc
+```
+
+`desktop:classes` compila el lanzador sin ejecutar `desktop:run`; esta comprobación no valida la interacción gráfica. `--continue` permite intentar las demás tareas aunque una falle, pero el resultado global sigue indicando el fallo.
+
+| Resultado | Archivo local |
+| --- | --- |
+| Suite completa | `core/build/reports/tests/test/index.html` |
+| Selección `sanity`/`basic` | `core/build/reports/tests/testSanityBasic/index.html` |
+| Documentación | `core/build/docs/javadoc/index.html` |
+
+En GitHub Actions, estos informes se descargan desde el artefacto `pacman-verification-reports` de la ejecución. Para revisar una evidencia concreta del estado descrito arriba, consulta la [verificación del commit `e430340`](https://github.com/Rpfdeveloper/PACman/actions/runs/39459585430).
 
 ## Generar documentación
 
